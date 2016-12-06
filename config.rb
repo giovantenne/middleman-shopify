@@ -21,6 +21,10 @@ activate :dato,
   token: '56d50e1b7499f07ddfed87475fbf396c7d9d556a4ce177ec95',
   base_url: 'http://www.mywebsite.com'
 
+
+
+
+
 ignore "/product.html"
 dato.products.each do |p| 
   proxy "/#{p.title.parameterize}.html", "/product.html", locals: { product: p }
