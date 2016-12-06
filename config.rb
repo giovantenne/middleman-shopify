@@ -17,9 +17,12 @@ page '/*.txt', layout: false
 #  which_fake_page: "Rendering a fake page with a local variable" }
 
 # General configuration
+activate :dato,
+  token: '56d50e1b7499f07ddfed87475fbf396c7d9d556a4ce177ec95',
+  base_url: 'http://www.mywebsite.com'
 
 ignore "/product.html"
-data.products.each do |p| 
+dato.products.each do |p| 
   proxy "/#{p.title.parameterize}.html", "/product.html", locals: { product: p }
 end
 
