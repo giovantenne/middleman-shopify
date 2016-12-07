@@ -62,15 +62,16 @@ agent.post("https://bkl14308.myshopify.com/admin/auth/login",
     "[remember]": "0"
   })
 page = agent.get("https://bkl14308.myshopify.com/admin/products")
-puts page
+puts page.inspect
 csrf=page.at('meta[name="csrf-token"]')[:content]
 payload = "operation=publish&value[channel_ids][]=81361541&value[channel_ids][]=81360069"
-puts csrf
+puts csrf.inspect
 dato.products.each do |prod|
   payload = payload + "&product_ids[]=#{prod.shopify_id}"
 end
+puts payload
 page2 = agent.put('https://bkl14308.myshopify.com/admin/products/set', 
                   payload, 
                   {"X-CSRF-Token" => csrf, "X-Requested-With" => "XMLHttpRequest"}.merge(ct)
                  )
-puts page2
+puts page2.inspect
