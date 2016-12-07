@@ -15,4 +15,6 @@ gem 'middleman-compass', '>= 4.0.0'
 gem 'middleman-dato'
 gem 'shopify_api'
 gem 'byebug'
+gem 'mechanize'
+
 ruby '2.3.1'

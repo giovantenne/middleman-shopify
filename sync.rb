@@ -1,6 +1,7 @@
 require "dato"
 require "byebug"
 require "shopify_api"
+require 'mechanize'
 
 client = Dato::Site::Client.new("60fe1ed5c8bba61e8236d636fc2c0ab7b2c6a2053b5415f204")
 loader = Dato::Local::Loader.new(client)
@@ -37,7 +38,8 @@ to_add.each do |item|
   new_product.body_html = item.description
   new_product.variants = [ { price:  item.price } ]
   new_product.images = [ { src: item.photo.url } ]
-  # new_product.published_scope = "global"
+
+  new_product.published_scope = "global"
   new_product.published = true
   new_product.save
   puts "Creo #{item.title} (#{new_product.id})"
@@ -45,7 +47,29 @@ to_add.each do |item|
   client.items.update(item.id, i.merge("shopify_id" => new_product.id.to_s))
 end
 
+agent = Mechanize.new { |agent|
+  agent.user_agent_alias = 'Mac Safari'
+}
+ct= { "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8"}
+agent.post("https://bkl14308.myshopify.com/admin/auth/login",
+  {
+    "utf8": "✓",
+    "redirect": "",
+    "highlight": "",
+    "subdomain": "",
+    "login": "bkl14308@dsiay.com",
+    "password": "bkl14308@dsiay.com",
+    "[remember]": "0"
+  })
+page = agent.get("https://bkl14308.myshopify.com/admin/products")
 
+csrf=page.at('meta[name="csrf-token"]')[:content]
+payload = "operation=publish&value[channel_ids][]=81361541&value[channel_ids][]=81360069"
 
-
-
+dato.product.each do |prod|
+  payload = payload + "&product_ids[]=#{prod.shopify_id}"
+end
+page2 = agent.put('https://bkl14308.myshopify.com/admin/products/set', 
+                  payload, 
+                  {"X-CSRF-Token" => csrf, "X-Requested-With" => "XMLHttpRequest"}.merge(ct)
+                 )
