@@ -66,7 +66,7 @@ page = agent.get("https://bkl14308.myshopify.com/admin/products")
 csrf=page.at('meta[name="csrf-token"]')[:content]
 payload = "operation=publish&value[channel_ids][]=81361541&value[channel_ids][]=81360069"
 
-dato.product.each do |prod|
+dato.products.each do |prod|
   payload = payload + "&product_ids[]=#{prod.shopify_id}"
 end
 page2 = agent.put('https://bkl14308.myshopify.com/admin/products/set', 
